@@ -26,6 +26,8 @@ async def check_payments():
 async def check_deadlines():
     users = get_all_users()
     for user in users:
+        if not user.subscription_due:
+            continue
         days_left = (user.subscription_due.date() - dt.now().date()).days
         if days_left < 0 and user.tariff_id:
             order = get_user_order(user.id)
