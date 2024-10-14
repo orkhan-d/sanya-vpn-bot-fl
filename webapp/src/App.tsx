@@ -11,13 +11,20 @@ function App() {
     }
 
     const submit = async () => {
-        await fetch(
-            'http://85.192.56.42:8080/',
+        const res = await fetch(
+            'http://85.192.56.42:8080/payment',
             {
-                method: 'GET',
-                mode: 'no-cors'
+                method: 'POST',
+                body: JSON.stringify({
+                    user_id: WebApp.initDataUnsafe.user?.id,
+                    amount: amount
+                })
             },
         )
+        if (res.ok) {
+            const url = await res.text()
+            WebApp.openLink(url)
+        }
     }
 
     return (

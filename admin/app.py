@@ -30,7 +30,7 @@ def create_payment_api(payment: NewPaymentData):
         payment.user_id,
         payment.amount
     )
-    return payment_kassa
+    return payment_kassa.confirmation.confirmation_url
 
 
 for model in modelviews:
