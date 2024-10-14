@@ -5,7 +5,7 @@ from db.crud.payments import get_payments, set_payment_paid
 from db.crud.orders import get_user_order
 from db.crud.tariffs import get_tariff_by_id
 from utils.vpn import remove_user
-from db.crud.users import top_up_user_balance, get_all_users, set_user_tariff, set_user_server
+from db.crud.users import top_up_user_balance, get_all_users, set_user_tariff, set_user_server, get_user_by_id
 from utils.payments import get_payment
 from datetime import datetime as dt
 
@@ -17,13 +17,16 @@ async def check_payments():
         if get_payment(payment.payment_id).paid:
             top_up_user_balance(payment.user_id, payment.amount)
             set_payment_paid(payment.id)
+            user = get_user_by_id(payment.user_id)
+            if user.invited_by:
+                top_up_user_balance(payment.user_id, payment.amount//10)
 
 
 @aiocron.crontab('2-56/6 * * * *')
 async def check_deadlines():
     users = get_all_users()
     for user in users:
-        days_left = user.subscription_due.date() - dt.now().date()
+        days_left = (user.subscription_due.date() - dt.now().date()).days
         if days_left < 0 and user.tariff_id:
             order = get_user_order(user.id)
             if order:

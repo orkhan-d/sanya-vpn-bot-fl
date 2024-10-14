@@ -6,6 +6,7 @@ from admin.auth import authentication_backend
 from db.base import engine
 from db.crud.payments import create_payment_db
 from db.models import modelviews
+from utils.payments import create_payment
 
 app = FastAPI()
 admin_app = Admin(app, engine, authentication_backend=authentication_backend)
@@ -13,7 +14,6 @@ admin_app = Admin(app, engine, authentication_backend=authentication_backend)
 
 class NewPaymentData(BaseModel):
     user_id: int
-    payment_id: str
     amount: int
 
 
@@ -24,12 +24,13 @@ def ping():
 
 @app.post('/payment')
 def create_payment_api(payment: NewPaymentData):
-    res = create_payment_db(
-        payment.payment_id,
+    payment_kassa = create_payment(payment.amount)
+    create_payment_db(
+        payment_kassa.id,
         payment.user_id,
         payment.amount
     )
-    return res.model_dump()
+    return payment_kassa
 
 
 for model in modelviews:
