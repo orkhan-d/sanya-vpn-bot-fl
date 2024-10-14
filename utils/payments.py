@@ -30,7 +30,10 @@ def create_payment(amount: int) -> PaymentResponse:
                         },
                         "vat_code": "1",
                     },
-                ]
+                ],
+                "customer": {
+                    "email": "111@111.11"
+                }
             }
         }
     )
