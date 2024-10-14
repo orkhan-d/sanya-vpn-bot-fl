@@ -10,15 +10,20 @@ function App() {
         setAmount(+e.target.value);
     }
 
-    const submit = async () => {
+    const submit: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+        e.preventDefault()
         const res = await fetch(
-            'http://85.192.56.42:8080/payment',
+            'https://85.192.56.42:8080/payment',
             {
                 method: 'POST',
                 body: JSON.stringify({
                     user_id: WebApp.initDataUnsafe.user?.id,
                     amount: amount
-                })
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: 'no-cors'
             },
         )
         if (res.ok) {
